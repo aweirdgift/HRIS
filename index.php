@@ -50,8 +50,29 @@ if($query = call_mysql_query($default_query)){
 
 
 */
+
+
+$data_row=array();
+$teacher_array =array();
+$query = "SELECT teacher_id,CONCAT(firstname,' ',lastname) as teacher_name FROM teacher WHERE teacher_id!='".$s_user_id."' ";
+$result = mysqli_query($db_connect,$query);			
+if($result){
+	$count = mysqli_num_rows($result);
+	if($count != 0){
+		while($data_row  = mysqli_fetch_assoc($result)){
+			$data_row = array_html($data_row);
+			array_push($teacher_array,$data_row);
+		}
+		
+	}
+	
+}
+
+$teacher_list = empty($teacher_array) ? '[]' :output($teacher_array);
+
 $select_academic_year_id = 0;
 $select_academic_year = json_encode(array($select_academic_year_id));
+$temp = array();
 $temp['sem'] = '2nd Semester';
 $temp['school_year'] = '2022-2023';
 $temp['school_year_id'] = '1';
@@ -68,6 +89,90 @@ $filter_year = json_encode($filter_year);
     include DOMAIN_PATH."/app/global/include_top.php";
 ?>
 </head>
+	<?php
+	//for fine-uploader.
+	?>
+	<link href="<?php echo BASE_URL;?>js/fine-uploader/fine-uploader-gallery.min.css?v=<?php echo FILE_VERSION;?>" rel="stylesheet">
+    <script src="<?php echo BASE_URL;?>js/fine-uploader/fine-uploader.min.js?v=<?php echo FILE_VERSION;?>"></script>
+    <script type="text/template" id="qq-template">
+        <div class="qq-uploader-selector qq-uploader qq-gallery" qq-drop-area-text="Drop files here">
+            <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+                <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+            </div>
+            <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+                <span class="qq-upload-drop-area-text-selector"></span>
+            </div>
+            <div class="qq-upload-button-selector qq-upload-button">
+                <div>Select a file</div>
+            </div>
+            <div>
+
+            </div>
+            <span class="qq-drop-processing-selector qq-drop-processing">
+                <span>Processing dropped files...</span>
+                <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+            </span>
+            <ul class="qq-upload-list-selector qq-upload-list" role="region" aria-live="polite" aria-relevant="additions removals">
+                <li>
+                    <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                    <div class="qq-progress-bar-container-selector qq-progress-bar-container">
+                        <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+                    </div>
+                    <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                    <div class="qq-thumbnail-wrapper">
+                        <img class="qq-thumbnail-selector" qq-max-size="120" qq-server-scale>
+                    </div>
+                    <button type="button" class="qq-upload-cancel-selector qq-upload-cancel">X</button>
+                    <button type="button" class="qq-upload-retry-selector qq-upload-retry">
+                        <span class="qq-btn qq-retry-icon" aria-label="Retry"></span>
+                        Retry
+                    </button>
+
+                    <div class="qq-file-info">
+                        <div class="qq-file-name">
+                            <span class="qq-upload-file-selector qq-upload-file"></span>
+                            <span class="qq-edit-filename-icon-selector qq-btn qq-edit-filename-icon" aria-label="Edit filename"></span>
+                        </div>
+                        <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                        <span class="qq-upload-size-selector qq-upload-size"></span>
+                        <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">
+                            <span class="qq-btn qq-delete-icon" aria-label="Delete"></span>
+                        </button>
+                        <button type="button" class="qq-btn qq-upload-pause-selector qq-upload-pause">
+                            <span class="qq-btn qq-pause-icon" aria-label="Pause"></span>
+                        </button>
+                        <button type="button" class="qq-btn qq-upload-continue-selector qq-upload-continue">
+                            <span class="qq-btn qq-continue-icon" aria-label="Continue"></span>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+
+            <dialog class="qq-alert-dialog-selector">
+                <div class="qq-dialog-message-selector"></div>
+                <div class="qq-dialog-buttons">
+                    <button type="button" class="qq-cancel-button-selector">Close</button>
+                </div>
+            </dialog>
+
+            <dialog class="qq-confirm-dialog-selector">
+                <div class="qq-dialog-message-selector"></div>
+                <div class="qq-dialog-buttons">
+                    <button type="button" class="qq-cancel-button-selector">No</button>
+                    <button type="button" class="qq-ok-button-selector">Yes</button>
+                </div>
+            </dialog>
+
+            <dialog class="qq-prompt-dialog-selector">
+                <div class="qq-dialog-message-selector"></div>
+                <input type="text">
+                <div class="qq-dialog-buttons">
+                    <button type="button" class="qq-cancel-button-selector">Cancel</button>
+                    <button type="button" class="qq-ok-button-selector">Ok</button>
+                </div>
+            </dialog>
+        </div>
+    </script>
 <style>
 #header_table{
 	font-weight : bold;
@@ -95,10 +200,10 @@ $filter_year = json_encode($filter_year);
                                         <h4 class="mb-3 header-title"></h4>
 		
                                         <div class="table-responsive-sm mt-4">
-										
+
 										    <div class="row">
 												<div class="col-lg-6">
-												<label>Fiscal Year</label>
+												<label>FORM EXAMPLE</label>
 												
 												<div class="input-group mb-3">
 												 <select  class="form-control" name ="school_year_id" id="school_year_id" placeholder="Fiscal Year & Semester" required></select>
@@ -109,6 +214,18 @@ $filter_year = json_encode($filter_year);
 												</div>
 											
                                             </div>
+
+
+										    <div class="row">
+												<div class="col-lg-6">
+													<button id="btn_modal" type="button" class="btn btn-outline-dark btn-rounded btn-sm ml-1 " style="padding: 6px 12px !important; ">SHOW MODAL</button>
+												</div>
+											
+                                            </div>
+
+
+
+											
 												<div  class="table  table-bordered col-xl-12 mb-4  mt-3 p-0" style="min-width:600px;overflow:auto;" >	
 													<div class="row col-sm-12 col-md-12 col-lg-12 p-0 m-0">
 													<div  class="col-sm-12  col-md-12 col-lg-12 " >
@@ -156,13 +273,110 @@ $filter_year = json_encode($filter_year);
     </div>
     <!-- all the js files -->
     <!-- bundle -->
+	
+	
+<div class="modal fade " id="modal_form_upload" tabindex="-1" role="dialog"  aria-hidden="true">
+<div class="modal-dialog modal-lg" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="modalTitle_upload"><?php echo $modal_title; ?></h5>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+
+<div class="panel-body">
+<div id="msg" class="alert alert-info alert-dismissable" style="display: block;">
+**Limit 20MB per Uploading.
+</div>
+<div id="upload_form_msg" class="alert alert-warning alert-dismissable <?php echo isset($message['errors']) ? 'd-block':'d-none';?>" >
+    <?php echo isset($message['errors']) ? $message['errors']:'';?>
+</div>
+  <!-- <form class="form-group" id="modalform" name='add_form' action="#" method="POST"> -->
+    <div class="row">
+      
+        <div class="form-group col-sm-12 col-lg-12">
+        <label for="content_title">Title :</label>
+        <input type="text" class="form-control" name="content_title" id="content_title" value="<?php echo $g_selected['title'];?>" required="">
+        </div>
+<?php
+if(($g_selected['data_type'] == "UPLOAD_FILE" OR $g_selected['data_type'] == "UPLOAD_ASSIGN") AND $param_id!=0){ 
+			$table_id = 'file_id';
+		?>			
+		<div id="table_uploaded" class="form-group  col-sm-12 col-lg-12 table-responsive ">
+		<table class="table">
+		  <thead class="thead-dark">
+			<tr>
+			  <th scope="col">DATE</th>
+			  <th scope="col">FILENAME</th>
+			  <th scope="col">ACTION</th>
+			</tr>
+		  </thead>
+		  <tbody>
+		   
+			<tr>
+			  <th scope="row" data-date_display="<?php echo $g_selected['fdatein'];?>"></th>
+			  <td><?php echo $g_selected['fname']; ?></td>
+			  <td><a href=<?php echo "'".BASE_URL."app/privatefiles.php?id=".$g_selected['file_id']."'"; ?>  target='_blank' title="DOWNLOAD"><i class="fa fa-download"> </i></a></td>
+			</tr>	  
+
+		  </tbody>
+		</table>			
+		</div>
+<?php } ?>
+		
+		<div class="form-group  col-sm-6 col-lg-6" id="attach_input">
+        <label for="">Attachment(s) :</label>
+			 <div id="traditional-uploader_file"></div>
+        </div>
+
+		<div class="form-group col-sm-12 col-lg-12">
+        <label for="content_summary">Summary/Notes:</label>
+			<textarea class="form-control" name="content_summary" id="content_summary" rows=8 > <?php echo $g_selected['fdesc'];?></textarea>
+	
+        </div>
+		<div class="table_shared form-group col-sm-12 col-lg-12">
+			<label for="shared_to">Shared To: </label>
+				<select  class="form-control" style="width:100%;" id="teacher_select" placeholder="Add Instructor" >
+					<option value="">Select Instructor</option>
+				</select>
+		</div>
+		  
+      </div>
+      
+</div>
+</div>
+    <div class="modal-footer">
+    <button  type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+    <button id="button_modal_upload" type="button" name="submit" value="<?php echo $text_action;?>" class="btn btn-primary">Save</button>
+    </div>
+   <!-- </form>-->
+</div>
+
+</div>
+</div> 	
 <?php  include FOOTER_PATH; ?>
 </body>
 <?php include DOMAIN_PATH."/app/global/include_bottom.php"; ?>
 <script>
 
 
-(function() {
+(function() { //starting anonymous function
+
+/*
+sample add event listener
+addListener(element, action, function() {
+	//code here
+});
+
+addListener(document.getElementById('download-csv-proj'), "click", function() {
+	//code here
+});
+
+*/
+
+//initialize global js variable
 var collection_select = [];
 var list_academic_year = <?php echo $filter_year; ?>;
 var table_project ="";
@@ -171,6 +385,88 @@ var total_record =0;
 var  check_box_all = false;
 var selected_ck = false;
 
+
+
+
+
+
+
+
+
+//for fine-uploader
+var manualUploader = new qq.FineUploader({
+	element: document.getElementById("traditional-uploader_file"),
+	autoUpload: false,
+	warnBeforeUnload: true,
+	validation: {
+		   allowedExtensions: [],
+		   itemLimit: 1,
+		},
+	request: {
+		endpoint: "<?php echo BASE_URL;?>app/ajax_fileupload.php",
+	   // params: {id:123,task:'upload'}
+	},
+	chunking: {
+		enabled: true,
+		concurrent: {
+			enabled: false
+		},
+		success: {
+			endpoint: "<?php echo BASE_URL;?>app/ajax_fileupload.php?done"
+		}
+	},
+	resume: {
+		enabled: false
+	},
+	retry: {
+		enableAuto: false,
+		showButton: false,
+		preventRetryResponseProperty:'preventRetry',
+	},
+	callbacks: {
+	onError: function(id, name, errorReason, xhrOrXdr) {
+		error_notif("Error :"+ errorReason);
+		qq(manualUploader.getItemByFileId(id)).remove();
+	},
+	onValidate: function(data) {
+		if (totalSizeSoFar + data.size > totalAllowedSize) {
+			error_notif("Error : Exceed Allowable File Size to Upload 20MB");
+			return false;
+		}
+		totalSizeSoFar += data.size;
+	},onAllComplete: function() {
+		
+		var tempA = manualUploader.getUploads({status: [qq.status.UPLOAD_SUCCESSFUL]});
+		if(tempA.length > 0){
+				success_notif("Successfully Saved");
+				setTimeout(function(){ refresh_aftersave(); }, 1000);
+		}else{
+				error_notif("Error Occured!");
+		}
+		isPaused = false;
+		removeClass(document.querySelector('body'),"loading");
+		
+	},onSubmit: function (id, fileName) {
+
+	},
+	onProgress: function(id, name, uploadedBytes, totalBytes) {
+		 addClass(document.querySelector('body'),'loading');
+	},
+	onManualRetry: function (id, fileName) {
+		
+		}
+
+	}
+});
+
+//end fine-uploader
+
+
+
+
+
+
+//for tabulator
 
 function numbering(cell,formatterParams){
 	var val = ""+ cell.getValue(); 
@@ -303,7 +599,10 @@ function record_details(values, data, calcParams) {
 	addListener(document.getElementById('print-proj'), "click", function() {
 		 table_for_project.print(false, true);
 	});
+//end tabulator
 
+
+//for selection
 var select_academic_year=$('#school_year_id').selectize({
 	valueField: 'school_year_id',
 	labelField: ['school_year'],
@@ -330,19 +629,20 @@ var select_academic_year=$('#school_year_id').selectize({
 });
 
 
-	var btn_year = document.getElementById('btn_gen_year');
-	if(btn_year){
-	addListener(btn_year,"click",function(){
-		var val =select_academic_year[0].selectize.getValue();
-		if(val==''){
-		
-		}else{
-			//console.log(val);
-			insertParam("academic_year",val);
-		}
-	});	
+var btn_year = document.getElementById('btn_gen_year');
+if(btn_year){
+addListener(btn_year,"click",function(){
+	var val =select_academic_year[0].selectize.getValue();
+	if(val==''){
+	
+	}else{
+		//console.log(val);
+		insertParam("academic_year",val);
 	}
+});	
+}
 
+//overlay loading when ajax call
 function add_overlay(){
 	var body = document.querySelector('body');	
 	var overlay = document.querySelector('.overlay');	
@@ -355,6 +655,7 @@ function add_overlay(){
 }
 
 add_overlay();
+
 $(document).on({
 	
 	ajaxStart: function(){
@@ -367,46 +668,50 @@ $(document).on({
 	}    
 });
 
+//end overlay
+
+
 
 addListener(document.getElementById('delete_sel_btn'), "click", function() {
         if(collection_select.length == 0){
             warning_notif('Please select Item in the table!');
         }else{
-            Swal.fire({
-              title: 'Are you sure?',
-              text: "You won't be able to revert this!",
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-           if (result.isConfirmed) {      
-			var json_id = JSON.stringify(collection_select);
-			$.post("<?php echo BASE_URL;?>app/admin/ajax_delete_studentclass.php", { action : 'DELETE_STUDENTLIST',teacher_class_student_ids:json_id}, 
-				function(returnedData){
-					var obj = returnedData;// JSON.parse(returnedData);
-					if(obj.result == "success"){
-						table_for_project.deleteRow(collection_select);
-						var len = collection_select.length;
-						total_record = total_record - len;
-						table_for_project.deselectRow();
-						collection_select=[];
-						table_for_project.recalc();
-						Swal.fire(
-						  'Deleted!',
-						  'Data has been deleted.',
-						  'success'
-						);
-					}else{
-						warning_notif("Error: "+obj.errors);                    
-					}
-			}).fail(function(){
-				  warning_notif("Error Encounter");
+			
+			Swal.fire({
+			  title: 'Are you sure?',
+			  text: "You won't be able to revert this!",
+			  icon: 'warning',
+			  showCancelButton: true,
+			  confirmButtonColor: '#3085d6',
+			  cancelButtonColor: '#d33',
+			  confirmButtonText: 'Yes, delete it!'
+			}).then((result) => {
+				   if (result.isConfirmed) {      
+					var json_id = JSON.stringify(collection_select);
+					$.post("<?php echo BASE_URL;?>app/admin/ajax_delete_studentclass.php", { action : 'DELETE_STUDENTLIST',teacher_class_student_ids:json_id}, 
+						function(returnedData){
+							var obj = returnedData;// JSON.parse(returnedData);
+							if(obj.result == "success"){
+								table_for_project.deleteRow(collection_select);
+								var len = collection_select.length;
+								total_record = total_record - len;
+								table_for_project.deselectRow();
+								collection_select=[];
+								table_for_project.recalc();
+								Swal.fire(
+								  'Deleted!',
+								  'Data has been deleted.',
+								  'success'
+								);
+							}else{
+								warning_notif("Error: "+obj.errors);                    
+							}
+					}).fail(function(){
+						  warning_notif("Error Encounter");
+					});
+			  }
 			});
-	  }
-	})
-	
+			
 	
 }
 });
@@ -532,7 +837,63 @@ addListener(document.getElementById('change_status'), "click", function() {
 	}
 });
 
-})();
+//modal
+var modalBtn = document.getElementById('btn_modal');
+addListener(modalBtn, "click", function() {
+		openModal();
+});
+
+function openModal(){
+		
+		var modal ="#modal_form_upload";
+		
+		var title = "Edit Files";
+      
+        if(document.getElementById('button_modal_upload')){
+            document.getElementById('button_modal_upload').value ="save";
+        }
+        if(document.getElementById('modalTitle_upload')){
+            document.getElementById('modalTitle_upload').innerHTML =title
+        }
+		if(document.getElementById('teacher_select')){
+           // document.getElementById('class_form_msg').innerHTML ="";
+		   teacher_select[0].selectize.setValue("");
+        }
+			
+        $(modal).modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+}
+//modal end
+var teacher_options = <?php echo $teacher_list; ?>;
+
+var teacher_select=$('#teacher_select').selectize({
+    valueField: 'teacher_id',
+    labelField: 'teacher_name',
+    searchField: ['teacher_name'],
+	create:false,
+	plugins: ['remove_button'],
+	//persist: false,
+    maxItems: null,
+	dropdownParent: "body",
+	options: teacher_options,
+	render: {
+		 item: function(item, escape) {
+            return '<div>' +
+                (item.teacher_name ? '<span class="name">' + escape(item.teacher_name) + '</span>' : '') +               
+            '</div>';
+        },
+        option: function(item, escape) {
+            return '<div> <h5 class="title">' + escape(item.teacher_name) +'</small></h5></div>';
+      
+        }
+    }
+});
+})(); //end anonymous
+
+
+//modify url
 function insertParam(key, value) {
         key = escape(key); value = escape(value);
 
@@ -596,6 +957,8 @@ function insertParam(key, value) {
 		window.location =  url + addlink;
 
     }
+	
+	//end modify url
 <?php
 
 		$msg_success =$session_class->getValue('success');

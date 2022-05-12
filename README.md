@@ -6,6 +6,35 @@ Copy or Clone this project.
 
 Import the database (optional)
 
+### Admin Side [dev.lms.ccc.edu.ph/app/admin] for checking functionality
+
+> To gain access .
+> usename : admin
+> password: CCC_MIS@123$#~15
+
+#### admin credential: 
+
+> ##ADMIN
+> usename : USER_ADMIN
+> password: USER_ADMIN
+>
+> ##REGISTRAR
+> usename : USER_REGS
+> password: USER_REGS
+
+##### Teacher/Student Side [dev.lms.ccc.edu.ph] for checking functionality
+
+> ##TEACHER
+> usename : ammontiano@ccc.edu.ph
+> password: Mis@0909
+
+### Access Local Side [localhost/web_app] for checking functionality
+
+> ##TEACHER
+> usename : ammontiano@ccc.edu.ph
+> password: IK4YvWnY
+
+
 
 ## File Folder Structures
 - app                 - contain php script for login users
